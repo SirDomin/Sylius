@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Sylius package.
+ *
+ * (c) Paweł Jędrzejewski
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 declare(strict_types=1);
 
 namespace Sylius\Bundle\ApiBundle\DataPersister;
@@ -9,6 +18,7 @@ use Sylius\Bundle\ApiBundle\Provider\CustomerProvider;
 use Sylius\Component\Core\Model\AddressInterface;
 use Sylius\Component\User\Model\UserInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Exception\TokenNotFoundException;
 
 final class AddressBookDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -40,7 +50,7 @@ final class AddressBookDataPersister implements ContextAwareDataPersisterInterfa
     {
         $token = $this->tokenStorage->getToken();
         if ($token === null) {
-            return false;
+            throw new TokenNotFoundException();
         }
 
         /** @var UserInterface $loggedUser */

@@ -51,7 +51,7 @@ final class AddressBookContext implements Context
     /**
      * @Given I am editing the address of :fullName
      */
-    public function iAmEditingTheAddressOf($fullName)
+    public function iAmEditingTheAddressOf(string $fullName): void
     {
         $address = $this->getAddressOf($fullName);
 
@@ -61,7 +61,7 @@ final class AddressBookContext implements Context
     /**
      * @When I want to add a new address to my address book
      */
-    public function iWantToAddANewAddressToMyAddressBook()
+    public function iWantToAddANewAddressToMyAddressBook(): void
     {
         $this->client->buildCreateRequest();
     }
@@ -69,9 +69,9 @@ final class AddressBookContext implements Context
     /**
      * @When /^I specify the (address as "([^"]+)", "([^"]+)", "([^"]+)", "([^"]+)", "([^"]+)", "([^"]+)")$/
      */
-    public function iSpecifyTheAddressAs(AddressInterface $address)
+    public function iSpecifyTheAddressAs(AddressInterface $address): void
     {
-        $this->client->setContent(
+        $this->client->setRequestData(
             [
                 'countryCode' => $address->getCountryCode(),
                 'street' => $address->getStreet(),
@@ -85,7 +85,7 @@ final class AddressBookContext implements Context
     /**
      * @When I add it
      */
-    public function iAddIt()
+    public function iAddIt(): void
     {
         $this->client->create();
     }
@@ -93,23 +93,23 @@ final class AddressBookContext implements Context
     /**
      * @When I leave every field empty
      */
-    public function iLeaveEveryFieldEmpty()
+    public function iLeaveEveryFieldEmpty(): void
     {
-        $this->client->setContent([]);
+        $this->client->setRequestData([]);
     }
 
     /**
      * @When I choose :countryName as my country
      */
-    public function iChooseAsMyCountry($countryName)
+    public function iChooseAsMyCountry(string $countryName): void
     {
-        $this->client->addRequestData('country', 'US');
+        $this->client->addRequestData('country', $countryName);
     }
 
     /**
      * @When I do not specify province
      */
-    public function iDoNotSpecifyProvince()
+    public function iDoNotSpecifyProvince(): void
     {
         $this->client->addRequestData('provinceName', null);
         $this->client->addRequestData('provinceCode', null);
@@ -118,7 +118,7 @@ final class AddressBookContext implements Context
     /**
      * @When I remove the street
      */
-    public function iRemoveTheStreet()
+    public function iRemoveTheStreet(): void
     {
         $this->client->addRequestData('street', null);
     }
@@ -126,7 +126,7 @@ final class AddressBookContext implements Context
     /**
      * @When I save my changed address
      */
-    public function iSaveMyChangedAddress()
+    public function iSaveMyChangedAddress(): void
     {
         $this->client->update();
     }
@@ -134,7 +134,7 @@ final class AddressBookContext implements Context
     /**
      * @Then I should be notified that the address has been successfully added
      */
-    public function iShouldBeNotifiedThatTheAddressHasBeenSuccessfullyAdded()
+    public function iShouldBeNotifiedThatTheAddressHasBeenSuccessfullyAdded(): void
     {
         Assert::true($this->responseChecker->isCreationSuccessful($this->client->getLastResponse()));
     }
@@ -142,9 +142,9 @@ final class AddressBookContext implements Context
     /**
      * @Then /^(address "[^"]+", "[^"]+", "[^"]+", "[^"]+", "[^"]+"(?:|, "[^"]+")) should(?:| still) be marked as my default address$/
      */
-    public function addressShouldBeMarkedAsMyDefaultAddress(AddressInterface $address)
+    public function addressShouldBeMarkedAsMyDefaultAddress(AddressInterface $address): void
     {
-        $response = json_decode($this->client->getLastResponse()->getContent(), true);
+        $response = $this->responseChecker->getResponseContent($this->client->getLastResponse());
 
         /** @var CustomerInterface $customer */
         $customer = $this->iriConverter->getItemFromIri($response['customer']);
@@ -163,17 +163,18 @@ final class AddressBookContext implements Context
     /**
      * @Then I should still be on the address addition page
      */
-    public function iShouldStillBeOnTheAddressAdditionPage()
+    public function iShouldStillBeOnTheAddressAdditionPage(): void
     {
         // Intentionally left empty
     }
 
     /**
-     * @Then /^I should be notified about errors$/
+     * @Then I should be notified about errors
      */
-    public function iShouldBeNotifiedAboutErrors()
+    public function iShouldBeNotifiedAboutErrors(): void
     {
-        $response = json_decode($this->client->getLastResponse()->getContent(), true);
+
+        $response = $this->responseChecker->getResponseContent($this->client->getLastResponse());
 
         Assert::true(sizeof($response['violations']) > 0);
     }
@@ -181,9 +182,9 @@ final class AddressBookContext implements Context
     /**
      * @Then I should be notified that the province needs to be specified
      */
-    public function iShouldBeNotifiedThatTheProvinceNeedsToBeSpecified()
+    public function iShouldBeNotifiedThatTheProvinceNeedsToBeSpecified(): void
     {
-        $response = json_decode($this->client->getLastResponse()->getContent(), true);
+        $response = $this->responseChecker->getResponseContent($this->client->getLastResponse());
 
         Assert::inArray(['propertyPath' => 'provinceName', 'message' => 'This value should not be null.'], $response['violations']);
     }
@@ -191,33 +192,21 @@ final class AddressBookContext implements Context
     /**
      * @Then I should still be on the :fullName address edit page
      */
-    public function iShouldStillBeOnTheAddressEditPage($fullName)
+    public function iShouldStillBeOnTheAddressEditPage(string $fullName): void
     {
         // Intentionally left empty
     }
 
     /**
-     * @Then I should still have :arg1 as my specified province
+     * @Then I should still have :province as my specified province
+     * @Then I should still have :value as my chosen province
      */
-    public function iShouldStillHaveAsMySpecifiedProvince($arg1)
+    public function iShouldStillHaveAsMySpecifiedProvince(string $province): void
     {
         Assert::false($this->responseChecker->isUpdateSuccessful($this->client->getLastResponse()));
     }
 
-    /**
-     * @Then I should still have :value as my chosen province
-     */
-    public function iShouldStillHaveAsMyChosenProvince($value)
-    {
-        // Intentionally left empty
-    }
-
-    /**
-     * @param string $fullName
-     *
-     * @return AddressInterface
-     */
-    private function getAddressOf($fullName)
+    private function getAddressOf(string $fullName): AddressInterface
     {
         [$firstName, $lastName] = explode(' ', $fullName);
 

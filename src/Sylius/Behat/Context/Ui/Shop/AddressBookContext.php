@@ -159,7 +159,7 @@ final class AddressBookContext implements Context
     /**
      * @When I do not specify province
      */
-    public function iDoNotSpecifyProvince()
+    public function iDoNotSpecifyProvince(): void
     {
         // Intentionally left empty
     }
@@ -264,7 +264,7 @@ final class AddressBookContext implements Context
     /**
      * @Then /^I should be notified about errors$/
      */
-    public function iShouldBeNotifiedAboutErrors()
+    public function iShouldBeNotifiedAboutErrors(): void
     {
         Assert::true($this->addressBookCreatePage->countValidationMessages() > 0);
     }
