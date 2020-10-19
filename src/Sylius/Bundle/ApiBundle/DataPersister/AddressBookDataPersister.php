@@ -60,12 +60,10 @@ final class AddressBookDataPersister implements ContextAwareDataPersisterInterfa
             $customer = $this->customerProvider->provide($loggedUser->getEmail());
 
             $data->setCustomer($customer);
-            $data->setFirstName($customer->getFirstName());
-            $data->setLastName($customer->getLastName());
             $customer->setDefaultAddress($data);
         }
 
-        return $this->decoratedDataPersister->persist($data, $context);
+        $this->decoratedDataPersister->persist($data, $context);
     }
 
     public function remove($data, array $context = [])

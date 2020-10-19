@@ -136,6 +136,7 @@ final class AddressBookContext implements Context
      */
     public function iShouldBeNotifiedThatTheAddressHasBeenSuccessfullyAdded(): void
     {
+        dd($this->responseChecker->getResponseContent($this->client->getLastResponse()));
         Assert::true($this->responseChecker->isCreationSuccessful($this->client->getLastResponse()));
     }
 
@@ -173,7 +174,6 @@ final class AddressBookContext implements Context
      */
     public function iShouldBeNotifiedAboutErrors(): void
     {
-
         $response = $this->responseChecker->getResponseContent($this->client->getLastResponse());
 
         Assert::true(sizeof($response['violations']) > 0);
