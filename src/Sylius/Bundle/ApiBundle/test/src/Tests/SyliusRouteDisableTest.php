@@ -12,6 +12,7 @@
 namespace Sylius\Bundle\ApiBundle\Application\Tests;
 
 use ApiPlatform\Core\Bridge\Symfony\Bundle\Test\ApiTestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SyliusRouteDisableTest extends ApiTestCase
 {
@@ -19,20 +20,23 @@ class SyliusRouteDisableTest extends ApiTestCase
 
     public function setUp(): void
     {
+        $this->setFixturesFiles([]);
+
         $this->setUpTest();
     }
 
     /**
      * @test
      */
-    public function it_has_removed_api_endpoint(): void
+    public function it_removes_api_method_to_endpoint(): void
     {
         static::createClient()->request(
             'GET',
-            '/api/v2/admin/promotions',
+            '/api/v2/admin/zones',
             ['auth_bearer' => $this->JWTAdminUserToken]
         );
 
         $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonContains(['hydra:description' => 'No route found for "GET http://example.com/api/v2/admin/zones"']);
     }
 }
