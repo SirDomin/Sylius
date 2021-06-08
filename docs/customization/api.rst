@@ -532,8 +532,8 @@ And here we go, now your response should look like this:
         //...
     }
 
-Removing endpoint from default api routes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Configuring endpoints using yaml
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To remove endpoint from api all you need to do is specify which resource and operation
 should be removed in ``config/api_platform/config.yaml``.
@@ -545,6 +545,36 @@ If you want to remove for example admin endpoint ``GET`` from ``Zones`` you need
         collectionOperations:
             admin_get (unset): ~
 
+
+Using the ``(unset)`` key you can remove filters you dont need.
+
+.. code-block:: yaml
+    '%sylius.model.product.class%':
+        collectionOperations:
+            shop_get:
+                filters (unset):
+                    - app.product_new_filter
+
+If you need to add new filter in yaml configuration, simply place this code into ``config/api_platform/config.yaml``
+
+.. code-block:: yaml
+    '%sylius.model.product.class%':
+        collectionOperations:
+            shop_get:
+                filters:
+                    - app.product_new_filter
+
+
+To add new operation all you need to do is specify it in config file.
+
+.. code-block:: yaml
+    '%sylius.model.channel.class%':
+        collectionOperations:
+            my_new_operation:
+                method: GET
+                path: /shop/channels
+                normalization_context:
+                    groups: ['shop:channel:read']
 
 Learn more
 -----------
