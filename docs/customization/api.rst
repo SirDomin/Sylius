@@ -532,6 +532,20 @@ And here we go, now your response should look like this:
         //...
     }
 
+Removing endpoint from default api routes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To remove endpoint from api all you need to do is specify which resource and operation
+should be removed in ``config/api_platform/config.yaml``.
+
+If you want to remove for example admin endpoint ``GET`` from ``Zones`` you need to use ``(unset)`` key in yaml config.
+
+.. code-block:: yaml
+    '%sylius.model.zone.class%':
+        collectionOperations:
+            admin_get (unset): ~
+
+
 Learn more
 -----------
 
