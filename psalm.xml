@@ -109,6 +109,7 @@
                 <referencedMethod name="Payum\Core\Model\GatewayConfigInterface::setFactoryName" />
                 <referencedMethod name="Symfony\Component\EventDispatcher\Event::stopPropagation" /> <!-- deprecated in Symfony 4.3 -->
                 <referencedMethod name="Symfony\Component\HttpFoundation\JsonResponse::create" /> <!-- deprecated in Symfony 5.1 -->
+                <referencedMethod name="Faker\Generator::__get" />
             </errorLevel>
         </DeprecatedMethod>
 
